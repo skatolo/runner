@@ -52,6 +52,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Apply patches
+      run: |
+        git apply patches/actions-cache-url-override.patch
+
     # Build runner layout
     - name: Build & Layout Release
       run: |

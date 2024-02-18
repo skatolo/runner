@@ -1,0 +1,44 @@
+From 24d867374c4589edd750720921d726c06e08e948 Mon Sep 17 00:00:00 2001
+From: Han Verstraete <welteki@pm.me>
+Date: Sat, 17 Feb 2024 16:17:42 +0100
+Subject: [PATCH] Don't initialize ACTIONS_CACHE_URL if it is already set on
+ the runner
+
+---
+ src/Runner.Worker/Handlers/ContainerActionHandler.cs  | 4 +++-
+ src/Runner.Worker/Handlers/NodeScriptActionHandler.cs | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/Runner.Worker/Handlers/ContainerActionHandler.cs b/src/Runner.Worker/Handlers/ContainerActionHandler.cs
+index eb75bb5..dbda23d 100644
+--- a/src/Runner.Worker/Handlers/ContainerActionHandler.cs
++++ b/src/Runner.Worker/Handlers/ContainerActionHandler.cs
+@@ -221,7 +221,9 @@ namespace GitHub.Runner.Worker.Handlers
+             Environment["ACTIONS_RUNTIME_TOKEN"] = systemConnection.Authorization.Parameters[EndpointAuthorizationParameters.AccessToken];
+             if (systemConnection.Data.TryGetValue("CacheServerUrl", out var cacheUrl) && !string.IsNullOrEmpty(cacheUrl))
+             {
+-                Environment["ACTIONS_CACHE_URL"] = cacheUrl;
++                if (string.IsNullOrEmpty(Environment["ACTIONS_CACHE_URL"])) {
++                    Environment["ACTIONS_CACHE_URL"]  = cacheUrl;
++                };
+             }
+             if (systemConnection.Data.TryGetValue("GenerateIdTokenUrl", out var generateIdTokenUrl) && !string.IsNullOrEmpty(generateIdTokenUrl))
+             {
+diff --git a/src/Runner.Worker/Handlers/NodeScriptActionHandler.cs b/src/Runner.Worker/Handlers/NodeScriptActionHandler.cs
+index 32d4eb0..c67b4d3 100644
+--- a/src/Runner.Worker/Handlers/NodeScriptActionHandler.cs
++++ b/src/Runner.Worker/Handlers/NodeScriptActionHandler.cs
+@@ -56,7 +56,9 @@ namespace GitHub.Runner.Worker.Handlers
+             Environment["ACTIONS_RUNTIME_TOKEN"] = systemConnection.Authorization.Parameters[EndpointAuthorizationParameters.AccessToken];
+             if (systemConnection.Data.TryGetValue("CacheServerUrl", out var cacheUrl) && !string.IsNullOrEmpty(cacheUrl))
+             {
+-                Environment["ACTIONS_CACHE_URL"] = cacheUrl;
++                if (string.IsNullOrEmpty(Environment["ACTIONS_CACHE_URL"])) {
++                    Environment["ACTIONS_CACHE_URL"]  = cacheUrl;
++                };
+             }
+             if (systemConnection.Data.TryGetValue("GenerateIdTokenUrl", out var generateIdTokenUrl) && !string.IsNullOrEmpty(generateIdTokenUrl))
+             {
+-- 
+2.42.0
+
